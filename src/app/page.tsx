@@ -1,73 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { initialPairs, Pair } from "./pairs";
+import { Card, initialCards } from "./cards";
+import { colorClasses } from "./colorClasses";
 
-type ColorClasses = {
-  [key: string]: string;
-};
-
-const colorClasses: ColorClasses = {
-  "red-500": "bg-red-500 text-red-800",
-  "blue-500": "bg-blue-500 text-blue-800",
-  "green-500": "bg-green-500 text-green-800",
-  "yellow-500": "bg-yellow-500 text-yellow-800",
-  "purple-500": "bg-purple-500 text-purple-800",
-  "orange-500": "bg-orange-500 text-orange-800",
-  "pink-500": "bg-pink-500 text-pink-800",
-  "indigo-500": "bg-indigo-500 text-indigo-800",
-  "gray-500": "bg-gray-500 text-gray-800",
-  "cyan-500": "bg-cyan-500 text-cyan-800",
-  "emerald-500": "bg-emerald-500 text-emerald-800",
-  "emerald-200": "bg-emerald-200 text-emerald-600",
-  "amber-500": "bg-amber-500 text-amber-800",
-  "lime-500": "bg-lime-500 text-lime-800",
-  "teal-500": "bg-teal-500 text-teal-800",
-};
-
-function shufflePairs(pairs: Pair[]): Pair[] {
-  return [...pairs].sort(() => Math.random() - 0.5);
+function shuffleCards(cards: Card[]): Card[] {
+  return [...cards].sort(() => Math.random() - 0.5);
 }
 
 export default function Home() {
-  const [pairs, setPairs] = useState<Pair[] | null>(initialPairs);
+  const [cards, setCards] = useState<Card[]>(initialCards);
 
   const flipCard = (cardId: number) => {
     const flippedPairs =
-      pairs?.filter((pair) => pair.flipped && !pair.matched) ?? [];
+      cards?.filter((card) => card.flipped && !card.matched) ?? [];
 
     if (flippedPairs?.length >= 2) {
-      setPairs((prevPairs) => {
-        if (!prevPairs) return null;
-        return prevPairs.map((pair) => {
+      setCards((prevCards) => {
+        return prevCards.map((card) => {
           if (
             flippedPairs.every(
-              (flippedPair) => flippedPair.pairId === pair.pairId
+              (flippedPair) => flippedPair.pairId === card.pairId
             )
           ) {
-            return { ...pair, matched: true };
+            return { ...card, matched: true };
           }
-          if (pair.matched) return pair;
+          if (card.matched) return card;
 
-          return { ...pair, flipped: false };
+          return { ...card, flipped: false };
         });
       });
     }
 
-    setPairs((prevPairs) => {
-      if (!prevPairs) return null;
-      return prevPairs.map((pair) => {
-        if (pair.cardId === cardId) {
-          return { ...pair, flipped: !pair.flipped };
+    setCards((prevCards) => {
+      return prevCards.map((card) => {
+        if (card.cardId === cardId) {
+          return { ...card, flipped: !card.flipped };
         }
-        return pair;
+        return card;
       });
     });
   };
 
   useEffect(() => {
-    const shuffledPairs = shufflePairs(initialPairs);
-    setPairs(shuffledPairs);
+    setCards(shuffleCards(initialCards));
   }, []);
 
   return (
@@ -75,20 +51,20 @@ export default function Home() {
       <h1 className="text-center p-3 font-[family-name:var(--font-barriecito)] text-2xl">
         Maze of Pairs
       </h1>
-      {pairs?.length && (
+      {cards?.length && (
         <>
           <ul className="grid grid-cols-4 gap-3">
-            {pairs.map((pair) => {
-              const colors = colorClasses[pair.color] || "";
+            {cards.map((card) => {
+              const colors = colorClasses[card.color] || "";
               return (
-                <li key={pair.cardId}>
+                <li key={card.cardId}>
                   <button
-                    onClick={() => flipCard(pair.cardId)}
+                    onClick={() => flipCard(card.cardId)}
                     className={`${
-                      pair.flipped ? colors : colorClasses["emerald-200"]
+                      card.flipped ? colors : colorClasses["emerald-200"]
                     } flex items-center justify-center size-16 rounded-xl shadow-lg`}
                   >
-                    {pair.flipped ? pair.pairId : "?"}
+                    {card.flipped ? card.pairId : "?"}
                   </button>
                 </li>
               );
@@ -97,7 +73,7 @@ export default function Home() {
 
           <button
             type="button"
-            onClick={() => setPairs(shufflePairs(initialPairs))}
+            onClick={() => setCards(shuffleCards(initialCards))}
             className="py-3 px-12 mt-5 bg-purple-300 text-purple-900 rounded-lg shadow-lg"
           >
             New Maze

@@ -1,4 +1,4 @@
-export type Pair = {
+export type Card = {
   pairId: number;
   cardId: number;
   color: string;
@@ -6,7 +6,7 @@ export type Pair = {
   flipped: boolean;
 };
 
-export const initialPairs: Pair[] = [
+export const initialCards: Card[] = [
   { pairId: 1, cardId: 1, color: "red-500", matched: false, flipped: false },
   { pairId: 1, cardId: 2, color: "red-500", matched: false, flipped: false },
   { pairId: 2, cardId: 3, color: "blue-500", matched: false, flipped: false },
